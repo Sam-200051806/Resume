@@ -9,7 +9,13 @@ import os
 st.set_page_config(
     page_title="Resume Analyzer",
     page_icon="📄",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded",
+    meta_tags=[
+        {"name": "description", "content": "Analyze resumes and extract insights using AI."},
+        {"name": "keywords", "content": "resume analyzer, AI resume analysis, job applications"},
+        {"name": "author", "content": "Your Name"},
+    ],
 )
 
 if (
