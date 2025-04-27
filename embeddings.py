@@ -1,11 +1,16 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_pinecone import PineconeVectorStore
-from langchain_community.vectorstores import FAISS
 import os
-import pinecone
 from dotenv import load_dotenv
 import uuid
+
+# Try importing Pinecone with new API
+try:
+    from langchain_pinecone import PineconeVectorStore
+    from pinecone import Pinecone  # Updated import
+except ImportError:
+    print("Pinecone packages not available. Please install with 'pip install pinecone langchain-pinecone'.")
+    raise
 
 load_dotenv()
 
@@ -20,12 +25,9 @@ def clear_pinecone_data(index_name, namespace=None):
         if not api_key:
             raise ValueError("Pinecone API key not found")
             
-    
-        pinecone.init(api_key=api_key)
+        pc = Pinecone(api_key=api_key)
         
-        
-        index = pinecone.Index(index_name)
-        
+        index = pc.Index(index_name)
         
         if namespace:
             index.delete(delete_all=True, namespace=namespace)
@@ -35,8 +37,6 @@ def clear_pinecone_data(index_name, namespace=None):
         print(f"Cleared all vectors from index {index_name}")
     except Exception as e:
         print(f"Error clearing Pinecone data: {str(e)}")
-
-
 
 def get_embeddings(text, resume_id=None):
     """
@@ -55,28 +55,26 @@ def get_embeddings(text, resume_id=None):
     
     chunks = text_splitter.create_documents([text])
     
-    
     for chunk in chunks:
         if not hasattr(chunk, "metadata"):
             chunk.metadata = {}
         chunk.metadata["resume_id"] = resume_id if resume_id else "default"
         chunk.metadata["source"] = "resume"
     
+    
     try:
-        
         index_name = os.getenv("INDEX_NAME")
         api_key = os.getenv("PINECONE_API_KEY")
         
         if not api_key or not index_name:
             raise ValueError("Pinecone API key or index name not found")
         
-        
         namespace = f"resume_{resume_id}" if resume_id else "default_resume"
         
         
-        pinecone.init(api_key=api_key)
+        pc = Pinecone(api_key=api_key)
         
-        
+
         vector_store = PineconeVectorStore.from_documents(
             chunks,
             embedding=embeddings,
@@ -84,16 +82,8 @@ def get_embeddings(text, resume_id=None):
             namespace=namespace
         )
         
-        
         return vector_store
         
     except Exception as e:
         print(f"Error with Pinecone: {str(e)}")
-        print("Falling back to local FAISS vector store")
-        
-        vector_store = FAISS.from_documents(chunks, embeddings)
-        
-        test_retriever = vector_store.as_retriever(search_kwargs={"k": 1})
-        test_docs = test_retriever.get_relevant_documents("test")
-        
-        return vector_store
+        raise ValueError(f"Failed to create vector store: {str(e)}")
