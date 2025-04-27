@@ -21,3 +21,4 @@ langchain-pinecone
 # Vector databases
 pinecone
 # Remove faiss-cpu
+torch
