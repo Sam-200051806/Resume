@@ -1,3 +1,4 @@
+from pdf2image import convert_from_path
 from PyPDF2 import PdfReader
 import os
 
@@ -34,7 +35,6 @@ def load_resume(uploaded_file):
                 try:
                     import pytesseract
                     from PIL import Image
-                    from pdf2image import convert_from_path
                     
                     print("Attempting OCR on PDF...")
                     images = convert_from_path(temp_path)

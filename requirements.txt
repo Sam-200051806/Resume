@@ -1,0 +1,33 @@
+# Core dependencies
+streamlit
+python-dotenv
+PyPDF2
+pypdf
+
+# PDF processing
+pdf2image
+pytesseract
+Pillow
+
+# LangChain ecosystem
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+langchain_huggingface
+langchain-groq
+langchain-pinecone
+
+# Vector databases
+pinecone-client
+faiss-cpu
+chromadb
+
+# Machine learning
+sentence-transformers
+torch
+transformers
+tiktoken
+
+# Note: 'uuid' is part of Python's standard library, no need to install
+# Note: 'tesseract' should be installed via system package manager, not pip
