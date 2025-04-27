@@ -6,16 +6,23 @@ from typing import Set
 import hashlib
 from datetime import datetime
 import os 
+
+# Set page configuration
 st.set_page_config(
     page_title="Resume Analyzer",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
-    meta_tags=[
-        {"name": "description", "content": "Analyze resumes and extract insights using AI."},
-        {"name": "keywords", "content": "resume analyzer, AI resume analysis, job applications"},
-        {"name": "author", "content": "Your Name"},
-    ],
+)
+
+# Add metadata using HTML
+st.markdown(
+    """
+    <meta name="description" content="Analyze resumes and extract insights using AI.">
+    <meta name="keywords" content="resume analyzer, AI resume analysis, job applications">
+    <meta name="author" content="Your Name">
+    """,
+    unsafe_allow_html=True,
 )
 
 if (
