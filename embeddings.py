@@ -49,7 +49,7 @@ def get_embeddings(text, resume_id=None):
     """
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,  
+        chunk_size=1000,  
         chunk_overlap=200  
     )
     
