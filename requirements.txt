@@ -1,24 +1,29 @@
-# Core dependencies
-streamlit
-python-dotenv
-PyPDF2
-pypdf
+# Core app dependencies
+streamlit>=1.24.0
+python-dotenv>=1.0.0
 
 # PDF processing
-pdf2image
-pytesseract
-Pillow
+PyPDF2>=3.0.0
+pdf2image>=1.16.0
+pytesseract>=0.3.10
+Pillow>=9.0.0
 
 # LangChain ecosystem
-langchain
-langchain-core
-langchain-community
-langchain-huggingface
-langchain_huggingface
-langchain-groq
-langchain-pinecone
+langchain>=0.3.0
+langchain-core>=0.1.0
+langchain-community>=0.3.0
+langchain-huggingface>=0.1.0
+langchain-groq>=0.3.0
+langchain-pinecone>=0.2.0
 
-# Vector databases
-pinecone
-# Remove faiss-cpu
-torch
+# Vector database
+pinecone>=6.0.0
+
+# Embedding models
+# Using a specific smaller model version for cloud compatibility
+sentence-transformers==2.2.2
+transformers==4.36.0
+
+# Extra dependencies
+numpy>=1.24.0
+pydantic>=2.0.0

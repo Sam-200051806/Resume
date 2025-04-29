@@ -1,22 +1,45 @@
+import os
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-import os
 from dotenv import load_dotenv
 import uuid
+
+# Set cache directories for cloud environment
+os.environ["TRANSFORMERS_CACHE"] = "/tmp/huggingface_cache"
+os.environ["HF_HOME"] = "/tmp/huggingface_home"
 
 # Try importing Pinecone with new API
 try:
     from langchain_pinecone import PineconeVectorStore
-    from pinecone import Pinecone  # Updated import
+    from pinecone import Pinecone
 except ImportError:
     print("Pinecone packages not available. Please install with 'pip install pinecone langchain-pinecone'.")
     raise
 
 load_dotenv()
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-mpnet-base-v2"
-)
+# Try loading models that produce 768-dimensional vectors to match Pinecone
+try:
+    # First try a smaller 768-dimension model (compatible with your Pinecone index)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/paraphrase-albert-small-v2"  # 768 dimensions
+    )
+    print("Successfully loaded smaller 768-dimension embedding model")
+except Exception as e:
+    print(f"Error loading first model: {str(e)}")
+    try:
+        # Fall back to the original model if needed
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-mpnet-base-v2"  # 768 dimensions
+        )
+        print("Successfully loaded original embedding model")
+    except Exception as e2:
+        # Last resort - distilbert which also produces 768 dimensions
+        print(f"Trying last resort model: {str(e2)}")
+        from langchain_community.embeddings import HuggingFaceEmbeddings as CommunityHFEmbeddings
+        embeddings = CommunityHFEmbeddings(
+            model_name="distilbert-base-uncased"  # Also 768 dimensions
+        )
 
 def clear_pinecone_data(index_name, namespace=None):
     """Clear existing vectors from Pinecone index"""
